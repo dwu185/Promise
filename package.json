@@ -1,6 +1,6 @@
 {
   "name": "promise-playground-di",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "simple promise implementation",
   "main": "promise/promise.js",
   "scripts": {
