@@ -1,0 +1,22 @@
+{
+  "name": "promise-playground-di",
+  "version": "1.0.1",
+  "description": "simple promise implementation",
+  "main": "promise/promise.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dwu185/RandomJavascript.git"
+  },
+  "author": "Di Wu <dwu185@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dwu185/RandomJavascript/issues"
+  },
+  "homepage": "https://github.com/dwu185/RandomJavascript#readme",
+  "devDependencies": {
+    "jest": "^22.4.3"
+  }
+}
