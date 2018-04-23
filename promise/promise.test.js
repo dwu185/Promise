@@ -145,6 +145,63 @@ test('Test catch: errHandler is omitted', () => {
 	.catch()).rejects.toThrow(testError);
 });
 
+test('Test then: if rejected, only onReject is called', () => {
+	expect.assertions(1);
+	return Promise.reject(Error(testError))
+	.then(val => {
+		expect(true).toBe(false); //shouldn't be here
+	}, err => {
+		expect(err).toEqual(Error(testError));
+	});
+});
+
+test('Test then: if resolved, only onFulfill is called', () => {
+	expect.assertions(1);
+	return Promise.resolve(testString)
+	.then(val => {
+		expect(val).toBe(testString); 
+	}, err => {
+		expect(true).toBe(false); //shouldn't be here
+	});
+});
+
+test('Test catch followed by then', () => {
+	expect.assertions(1);
+	return new Promise((resolve, reject) => {
+		throw Error(testError);
+	})
+	.catch(err => {
+		return testString;
+	})
+	.then(val => expect(val).toBe(testString));
+});
+
+test('Test then followed by catch: catch error in promise', () => {
+	expect.assertions(1);
+	return new Promise((resolve, reject) => {
+		reject(testError);
+	})
+	.then(val => {
+		expect(true).toBe(false); //shouldn't be here
+	})
+	.catch(err => {
+		expect(err).toBe(testError)
+	});
+});
+
+test('Test then followed by catch: catch error in then', () => {
+	expect.assertions(1);
+	return new Promise((resolve, reject) => {
+		resolve();
+	})
+	.then(() => {
+		throw(Error(testError));
+	})
+	.catch(err => {
+		expect(err).toEqual(Error(testError))
+	});
+});
+
 test('Test static all with []: return resolved results', () => {
 	return expect(Promise.all([])).resolves.toEqual([]);
 });
