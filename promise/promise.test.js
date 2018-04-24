@@ -282,7 +282,6 @@ test('Test static race with [<promises that resolves>]:\
  	const slowPromise = new Promise ( (resolve, reject) => {
  		setTimeout(()=>resolve('slow'), 50);
  	});
- 	console.log('about to call race...');
 	return expect(Promise.race([slowPromise, quickPromise]))
 	.resolves.toBe('quick');
 });
@@ -297,6 +296,39 @@ test('Test static race with [<promises with first one rejects>]:\
  	}); 	
 	return expect(Promise.race([slowPromise, quickPromise]))
 	.rejects.toThrow('reject');
+});
+
+test('Test static promisify: callback return error', () => {
+	function fnToWrap (input, cb) {
+		cb(testError);
+	}
+	const wrapped = Promise.promisify(fnToWrap);
+	return expect(wrapped()).rejects.toBe(testError);
+});
+
+test('Test static promisify: callback return value', () => {
+	function fnToWrap (input, cb) {
+		cb(null, input);
+	}
+	const wrapped = Promise.promisify(fnToWrap);
+	return expect(wrapped(testString)).resolves.toBe(testString);
+});
+
+test('Test static promisify: callback that throws', () => {
+	function fnToWrap (input, cb) {
+		throw Error(testError);
+	}
+	const wrapped = Promise.promisify(fnToWrap);
+	return expect(wrapped()).rejects.toThrow(testError);
+});
+
+test('Test static promisify: callback multiple args', () => {
+	function fnToWrap (in1, in2, cb) {
+		cb(null, in1+in2);
+	}
+	const wrapped = Promise.promisify(fnToWrap);
+	return expect(wrapped(testString, testError))
+	.resolves.toBe(testString+testError);
 });
 
 

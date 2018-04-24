@@ -89,7 +89,11 @@ class Promise {
         this._handlers = null;
     }
 
-    //Add observers
+    /*
+    * Add observers
+    * According to spec: onFulfilled or onRejected must not be called 
+    * until the execution context stack contains only platform code
+    */
     done (onFulfill, onReject) {
         setTimeout( () => {
             if (this._state === PENDING) {
@@ -202,6 +206,29 @@ class Promise {
                 }
             }
         });
+    }
+
+    /*
+    * Wrap a function that takes node-style callback
+    * and return a function that generates a promise
+    */
+    static promisify(fn) {
+        return (...args) => {
+            return new Promise((resolve, reject) => {
+                const argsExpected = fn.length;
+                let filledArgs = new Array(argsExpected).fill(undefined);
+                filledArgs.forEach((arg, index, arr) => {
+                    if (index === argsExpected-1) {
+                        arr[index] = (err, resp) => {
+                            if (err) reject(err);
+                            else resolve(resp);
+                        }
+                    }
+                    else arr[index] = args[index];
+                });
+                fn(...filledArgs);
+            });
+        };
     }
 
 }
